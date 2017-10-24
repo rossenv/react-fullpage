@@ -71,7 +71,9 @@ export default class SectionsContainer extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.scrollingStarted && prevState.scrollingStarted) {
-      console.log('SCROLLED');
+      if (this.props.scrollEndFn) {
+        setTimeout(() => this.props.scrollEndFn(this.state), 0);
+      }
     }
   }
 
@@ -351,8 +353,8 @@ export default class SectionsContainer extends Component {
   }
 
   _handleScrollCallback() {
-    if (this.props.scrollCallback) {
-      setTimeout(() => this.props.scrollCallback(this.state), 0);
+    if (this.props.scrollStartFn) {
+      setTimeout(() => this.props.scrollStartFn(this.state), 0);
     }
   }
 
@@ -433,7 +435,8 @@ export default class SectionsContainer extends Component {
 }
 
 SectionsContainer.defaultProps = {
-  scrollCallback: null,
+  scrollStartFn: null,
+  scrollEndFn: null,
   delay: 1000,
   verticalAlign: false,
   scrollBar: false,
@@ -450,7 +453,8 @@ SectionsContainer.defaultProps = {
 };
 
 SectionsContainer.propTypes = {
-  scrollCallback: PropTypes.func,
+  scrollStartFn: PropTypes.func,
+  scrollEndFn: PropTypes.func,
   delay: PropTypes.number,
   verticalAlign: PropTypes.bool,
   scrollBar: PropTypes.bool,

@@ -101,8 +101,14 @@ var SectionsContainer = function (_Component) {
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps, prevState) {
+      var _this2 = this;
+
       if (!this.state.scrollingStarted && prevState.scrollingStarted) {
-        console.log('SCROLLED');
+        if (this.props.scrollEndFn) {
+          setTimeout(function () {
+            return _this2.props.scrollEndFn(_this2.state);
+          }, 0);
+        }
       }
     }
   }, {
@@ -159,12 +165,12 @@ var SectionsContainer = function (_Component) {
   }, {
     key: '_addChildrenWithAnchorId',
     value: function _addChildrenWithAnchorId() {
-      var _this2 = this;
+      var _this3 = this;
 
       var index = 0;
 
       return _react2.default.Children.map(this.props.children, function (child) {
-        var id = _this2.props.anchors[index];
+        var id = _this3.props.anchors[index];
 
         index++;
 
@@ -374,23 +380,23 @@ var SectionsContainer = function (_Component) {
   }, {
     key: '_handleScrollCallback',
     value: function _handleScrollCallback() {
-      var _this3 = this;
+      var _this4 = this;
 
-      if (this.props.scrollCallback) {
+      if (this.props.scrollStartFn) {
         setTimeout(function () {
-          return _this3.props.scrollCallback(_this3.state);
+          return _this4.props.scrollStartFn(_this4.state);
         }, 0);
       }
     }
   }, {
     key: '_resetScroll',
     value: function _resetScroll() {
-      var _this4 = this;
+      var _this5 = this;
 
       this._clearResetScrollTimer();
 
       this._resetScrollTimer = setTimeout(function () {
-        _this4.setState({
+        _this5.setState({
           scrollingStarted: false
         });
       }, this.props.delay + 300);
@@ -405,7 +411,7 @@ var SectionsContainer = function (_Component) {
   }, {
     key: 'renderNavigation',
     value: function renderNavigation() {
-      var _this5 = this;
+      var _this6 = this;
 
       var navigationStyle = {
         position: 'fixed',
@@ -423,14 +429,14 @@ var SectionsContainer = function (_Component) {
           backgroundColor: '#556270',
           padding: '5px',
           transition: 'all 0.2s',
-          transform: _this5.state.activeSection === index ? 'scale(1.3)' : 'none'
+          transform: _this6.state.activeSection === index ? 'scale(1.3)' : 'none'
         };
 
         return _react2.default.createElement('a', {
           href: '#' + link,
           key: index,
-          className: _this5.props.navigationAnchorClass || 'Navigation-Anchor',
-          style: _this5.props.navigationAnchorClass ? null : anchorStyle
+          className: _this6.props.navigationAnchorClass || 'Navigation-Anchor',
+          style: _this6.props.navigationAnchorClass ? null : anchorStyle
         });
       });
 
@@ -474,7 +480,8 @@ exports.default = SectionsContainer;
 
 
 SectionsContainer.defaultProps = {
-  scrollCallback: null,
+  scrollStartFn: null,
+  scrollEndFn: null,
   delay: 1000,
   verticalAlign: false,
   scrollBar: false,
@@ -491,7 +498,8 @@ SectionsContainer.defaultProps = {
 };
 
 SectionsContainer.propTypes = {
-  scrollCallback: _propTypes2.default.func,
+  scrollStartFn: _propTypes2.default.func,
+  scrollEndFn: _propTypes2.default.func,
   delay: _propTypes2.default.number,
   verticalAlign: _propTypes2.default.bool,
   scrollBar: _propTypes2.default.bool,
