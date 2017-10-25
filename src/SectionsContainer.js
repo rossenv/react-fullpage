@@ -67,7 +67,7 @@ export default class SectionsContainer extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.scrollingStarted && prevState.scrollingStarted) {
       if (this.props.scrollEndFn) {
-        this.props.scrollEndFn(this.state);
+        setTimeout(() => this.props.scrollEndFn(this.state), 0);
       }
     }
   }
@@ -207,13 +207,16 @@ export default class SectionsContainer extends Component {
   _handleResize = (started: boolean = true) => {
     const position = 0 - this.state.activeSection * window.innerHeight;
 
-    this.setState({
-      scrollingStarted: started,
-      windowHeight: window.innerHeight,
-      sectionScrolledPosition: position,
-    });
-
-    this._resetScroll();
+    this.setState(
+      {
+        scrollingStarted: started,
+        windowHeight: window.innerHeight,
+        sectionScrolledPosition: position,
+      },
+      () => {
+        this._resetScroll();
+      }
+    );
   };
 
   _handleSectionTransition = (index: number) => {
@@ -223,14 +226,17 @@ export default class SectionsContainer extends Component {
       return false;
     }
 
-    this.setState({
-      scrollingStarted: true,
-      activeSection: index,
-      sectionScrolledPosition: position,
-    });
-
-    this._resetScroll();
-    this._handleScrollCallback();
+    this.setState(
+      {
+        scrollingStarted: true,
+        activeSection: index,
+        sectionScrolledPosition: position,
+      },
+      () => {
+        this._resetScroll();
+        this._handleScrollCallback();
+      }
+    );
   };
 
   _handleArrowKeys = (e: Event) => {
@@ -347,7 +353,7 @@ export default class SectionsContainer extends Component {
 
   _handleScrollCallback = () => {
     if (this.props.scrollStartFn) {
-      this.props.scrollStartFn(this.state);
+      setTimeout(() => this.props.scrollStartFn(this.state), 0);
     }
   };
 

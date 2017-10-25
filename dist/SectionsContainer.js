@@ -165,9 +165,9 @@ var SectionsContainer = function (_Component) {
         scrollingStarted: started,
         windowHeight: window.innerHeight,
         sectionScrolledPosition: position
+      }, function () {
+        _this._resetScroll();
       });
-
-      _this._resetScroll();
     };
 
     _this._handleSectionTransition = function (index) {
@@ -181,10 +181,10 @@ var SectionsContainer = function (_Component) {
         scrollingStarted: true,
         activeSection: index,
         sectionScrolledPosition: position
+      }, function () {
+        _this._resetScroll();
+        _this._handleScrollCallback();
       });
-
-      _this._resetScroll();
-      _this._handleScrollCallback();
     };
 
     _this._handleArrowKeys = function (e) {
@@ -282,7 +282,9 @@ var SectionsContainer = function (_Component) {
 
     _this._handleScrollCallback = function () {
       if (_this.props.scrollStartFn) {
-        _this.props.scrollStartFn(_this.state);
+        setTimeout(function () {
+          return _this.props.scrollStartFn(_this.state);
+        }, 0);
       }
     };
 
@@ -402,9 +404,13 @@ var SectionsContainer = function (_Component) {
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps, prevState) {
+      var _this2 = this;
+
       if (!this.state.scrollingStarted && prevState.scrollingStarted) {
         if (this.props.scrollEndFn) {
-          this.props.scrollEndFn(this.state);
+          setTimeout(function () {
+            return _this2.props.scrollEndFn(_this2.state);
+          }, 0);
         }
       }
     }
