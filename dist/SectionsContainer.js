@@ -135,7 +135,7 @@ var SectionsContainer = function (_Component) {
 
       _this.prevTime = curTime;
 
-      if (timeDiff > 100) {
+      if (timeDiff > 150) {
         _this.scrollings = [];
       }
 
@@ -406,8 +406,6 @@ var SectionsContainer = function (_Component) {
     value: function componentDidUpdate(prevProps, prevState) {
       var _this2 = this;
 
-      console.log('this.state.scrollingStarted: ', this.state.scrollingStarted);
-      console.log('prevState.scrollingStarted: ', prevState.scrollingStarted);
       if (!this.state.scrollingStarted && prevState.scrollingStarted) {
         if (this.props.scrollEndFn) {
           setTimeout(function () {
