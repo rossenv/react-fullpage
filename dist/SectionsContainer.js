@@ -282,9 +282,7 @@ var SectionsContainer = function (_Component) {
 
     _this._handleScrollCallback = function () {
       if (_this.props.scrollStartFn) {
-        setTimeout(function () {
-          return _this.props.scrollStartFn(_this.state);
-        }, 0);
+        _this.props.scrollStartFn(_this.state);
       }
     };
 
@@ -404,13 +402,9 @@ var SectionsContainer = function (_Component) {
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps, prevState) {
-      var _this2 = this;
-
       if (!this.state.scrollingStarted && prevState.scrollingStarted) {
         if (this.props.scrollEndFn) {
-          setTimeout(function () {
-            return _this2.props.scrollEndFn(_this2.state);
-          }, 0);
+          this.props.scrollEndFn(this.state);
         }
       }
     }

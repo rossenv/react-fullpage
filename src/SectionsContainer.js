@@ -67,7 +67,7 @@ export default class SectionsContainer extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.scrollingStarted && prevState.scrollingStarted) {
       if (this.props.scrollEndFn) {
-        setTimeout(() => this.props.scrollEndFn(this.state), 0);
+        this.props.scrollEndFn(this.state);
       }
     }
   }
@@ -347,7 +347,7 @@ export default class SectionsContainer extends Component {
 
   _handleScrollCallback = () => {
     if (this.props.scrollStartFn) {
-      setTimeout(() => this.props.scrollStartFn(this.state), 0);
+      this.props.scrollStartFn(this.state);
     }
   };
 
