@@ -135,7 +135,7 @@ var SectionsContainer = function (_Component) {
 
       _this.prevTime = curTime;
 
-      if (timeDiff > 200) {
+      if (timeDiff > 100) {
         _this.scrollings = [];
       }
 
@@ -204,8 +204,6 @@ var SectionsContainer = function (_Component) {
     };
 
     _this._handleTouchNav = function () {
-      var that = _this;
-
       var touchsurface = document.querySelector('.' + _this.props.className),
           swipedir,
           startX,
@@ -249,14 +247,14 @@ var SectionsContainer = function (_Component) {
           if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) {
             // 2nd condition for vertical swipe met
             swipedir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
-            var direction = swipedir === 'down' ? that.state.activeSection - 1 : swipedir === 'up' ? that.state.activeSection + 1 : -1;
-            var hash = that.props.anchors[direction];
+            var direction = swipedir === 'down' ? this.state.activeSection - 1 : swipedir === 'up' ? this.state.activeSection + 1 : -1;
+            var hash = this.props.anchors[direction];
 
-            if (!that.props.anchors.length || hash) {
+            if (!this.props.anchors.length || hash) {
               window.location.hash = '#' + hash;
             }
 
-            that._handleSectionTransition(direction);
+            this._handleSectionTransition(direction);
           }
         }
         handleswipe(swipedir);

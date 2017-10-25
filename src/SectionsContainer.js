@@ -181,7 +181,7 @@ export default class SectionsContainer extends Component {
 
     this.prevTime = curTime;
 
-    if (timeDiff > 200) {
+    if (timeDiff > 150) {
       this.scrollings = [];
     }
 
@@ -259,8 +259,6 @@ export default class SectionsContainer extends Component {
   };
 
   _handleTouchNav = () => {
-    var that = this;
-
     var touchsurface = document.querySelector('.' + this.props.className),
       swipedir,
       startX,
@@ -313,15 +311,15 @@ export default class SectionsContainer extends Component {
             swipedir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
             var direction =
               swipedir === 'down'
-                ? that.state.activeSection - 1
-                : swipedir === 'up' ? that.state.activeSection + 1 : -1;
-            var hash = that.props.anchors[direction];
+                ? this.state.activeSection - 1
+                : swipedir === 'up' ? this.state.activeSection + 1 : -1;
+            var hash = this.props.anchors[direction];
 
-            if (!that.props.anchors.length || hash) {
+            if (!this.props.anchors.length || hash) {
               window.location.hash = '#' + hash;
             }
 
-            that._handleSectionTransition(direction);
+            this._handleSectionTransition(direction);
           }
         }
         handleswipe(swipedir);
