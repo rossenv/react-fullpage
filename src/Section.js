@@ -10,20 +10,30 @@ class Section extends React.Component {
     };
   }
 
-  handleResize() {
-    this.setState({
-      windowHeight: window.innerHeight,
-    });
-  }
-
   componentDidMount() {
-    this.handleResize();
-    window.addEventListener('resize', () => this.handleResize());
+    this._handleResize();
+    window.addEventListener('resize', () => this._handleResize());
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', () => this.handleResize());
+    window.removeEventListener('resize', () => this._handleResize());
   }
+
+  _handleResize = () => {
+    this.setState({
+      windowHeight: window.innerHeight,
+    });
+  };
+
+  _renderVerticalAlign = () => {
+    const verticalAlignStyle = {
+      display: 'table-cell',
+      verticalAlign: 'middle',
+      width: '100%',
+    };
+
+    return <div style={verticalAlignStyle}>{this.props.children}</div>;
+  };
 
   render() {
     const alignVertical = this.props.verticalAlign || this.context.verticalAlign;
@@ -50,16 +60,6 @@ class Section extends React.Component {
         {alignVertical ? this._renderVerticalAlign() : this.props.children}
       </div>
     );
-  }
-
-  _renderVerticalAlign() {
-    const verticalAlignStyle = {
-      display: 'table-cell',
-      verticalAlign: 'middle',
-      width: '100%',
-    };
-
-    return <div style={verticalAlignStyle}>{this.props.children}</div>;
   }
 }
 

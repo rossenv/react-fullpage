@@ -32,6 +32,26 @@ var Section = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Section.__proto__ || Object.getPrototypeOf(Section)).call(this));
 
+    _this._handleResize = function () {
+      _this.setState({
+        windowHeight: window.innerHeight
+      });
+    };
+
+    _this._renderVerticalAlign = function () {
+      var verticalAlignStyle = {
+        display: 'table-cell',
+        verticalAlign: 'middle',
+        width: '100%'
+      };
+
+      return React.createElement(
+        'div',
+        { style: verticalAlignStyle },
+        _this.props.children
+      );
+    };
+
     _this.state = {
       windowHeight: 0
     };
@@ -39,20 +59,13 @@ var Section = function (_React$Component) {
   }
 
   _createClass(Section, [{
-    key: 'handleResize',
-    value: function handleResize() {
-      this.setState({
-        windowHeight: window.innerHeight
-      });
-    }
-  }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
       var _this2 = this;
 
-      this.handleResize();
+      this._handleResize();
       window.addEventListener('resize', function () {
-        return _this2.handleResize();
+        return _this2._handleResize();
       });
     }
   }, {
@@ -61,7 +74,7 @@ var Section = function (_React$Component) {
       var _this3 = this;
 
       window.removeEventListener('resize', function () {
-        return _this3.handleResize();
+        return _this3._handleResize();
       });
     }
   }, {
@@ -88,21 +101,6 @@ var Section = function (_React$Component) {
           style: sectionStyle
         },
         alignVertical ? this._renderVerticalAlign() : this.props.children
-      );
-    }
-  }, {
-    key: '_renderVerticalAlign',
-    value: function _renderVerticalAlign() {
-      var verticalAlignStyle = {
-        display: 'table-cell',
-        verticalAlign: 'middle',
-        width: '100%'
-      };
-
-      return React.createElement(
-        'div',
-        { style: verticalAlignStyle },
-        this.props.children
       );
     }
   }]);

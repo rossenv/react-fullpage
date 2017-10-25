@@ -15,11 +15,6 @@ export default class SectionsContainer extends Component {
       sectionScrolledPosition: 0,
       windowHeight: 0,
     };
-
-    this._handleMouseWheel = this._handleMouseWheel.bind(this);
-    this._handleAnchor = this._handleAnchor.bind(this);
-    this._handleResize = this._handleResize.bind(this);
-    this._handleArrowKeys = this._handleArrowKeys.bind(this);
   }
 
   getChildContext() {
@@ -79,7 +74,7 @@ export default class SectionsContainer extends Component {
     }
   }
 
-  _getAverage(elements, number) {
+  _getAverage = (elements, number) => {
     var sum = 0;
 
     //taking `number` elements from the end to make the average, if there are not enought, 1
@@ -90,23 +85,23 @@ export default class SectionsContainer extends Component {
     }
 
     return Math.ceil(sum / number);
-  }
+  };
 
-  _removeDefaultEventListeners() {
+  _removeDefaultEventListeners = () => {
     window.removeEventListener('resize', this._handleResize);
     window.removeEventListener('hashchange', this._handleAnchor);
 
     if (this.props.arrowNavigation) {
       window.removeEventListener('keydown', this._handleArrowKeys);
     }
-  }
+  };
 
-  _addCSS3Scroll() {
+  _addCSS3Scroll = () => {
     this._addOverflowToBody();
     this._addMouseWheelEventHandlers();
-  }
+  };
 
-  _addActiveClass() {
+  _addActiveClass = () => {
     this._removeActiveClass();
 
     let hash = window.location.hash.substring(1);
@@ -118,9 +113,9 @@ export default class SectionsContainer extends Component {
         (activeLinks[i].className.length > 0 ? ' ' : '') +
         `${this.props.activeClass}`;
     }
-  }
+  };
 
-  _removeActiveClass() {
+  _removeActiveClass = () => {
     let activeLinks = document.querySelectorAll(
       `a:not([href="#${this.props.anchors[this.state.activeSection]}"])`
     );
@@ -128,9 +123,9 @@ export default class SectionsContainer extends Component {
     for (let i = 0; i < activeLinks.length; i++) {
       activeLinks[i].className = activeLinks[i].className.replace(/\b ?active/g, '');
     }
-  }
+  };
 
-  _addChildrenWithAnchorId() {
+  _addChildrenWithAnchorId = () => {
     let index = 0;
 
     return React.Children.map(this.props.children, child => {
@@ -146,27 +141,27 @@ export default class SectionsContainer extends Component {
         return child;
       }
     });
-  }
+  };
 
-  _addOverflowToBody() {
+  _addOverflowToBody = () => {
     document.querySelector('body').style.overflow = 'hidden';
-  }
+  };
 
-  _removeOverflowFromBody() {
+  _removeOverflowFromBody = () => {
     document.querySelector('body').style.overflow = 'initial';
-  }
+  };
 
-  _addMouseWheelEventHandlers() {
+  _addMouseWheelEventHandlers = () => {
     window.addEventListener('mousewheel', this._handleMouseWheel, false);
     window.addEventListener('DOMMouseScroll', this._handleMouseWheel, false);
-  }
+  };
 
-  _removeMouseWheelEventHandlers() {
+  _removeMouseWheelEventHandlers = () => {
     window.removeEventListener('mousewheel', this._handleMouseWheel);
     window.removeEventListener('DOMMouseScroll', this._handleMouseWheel);
-  }
+  };
 
-  _handleMouseWheel(event) {
+  _handleMouseWheel = event => {
     const e = window.event || event; // old IE support
     const value = e.wheelDelta || -e.deltaY || -e.detail;
     const delta = Math.max(-1, Math.min(1, value));
@@ -209,7 +204,7 @@ export default class SectionsContainer extends Component {
     this._setAnchor(activeSection);
     this._handleSectionTransition(activeSection);
     this._addActiveClass();
-  }
+  };
 
   _handleResize = (started: boolean = true) => {
     const position = 0 - this.state.activeSection * window.innerHeight;
@@ -223,7 +218,7 @@ export default class SectionsContainer extends Component {
     this._resetScroll();
   };
 
-  _handleSectionTransition(index) {
+  _handleSectionTransition = (index: number) => {
     const position = 0 - index * this.state.windowHeight;
 
     if (!this.props.anchors.length || index === -1 || index >= this.props.anchors.length) {
@@ -238,9 +233,9 @@ export default class SectionsContainer extends Component {
 
     this._resetScroll();
     this._handleScrollCallback();
-  }
+  };
 
-  _handleArrowKeys(e) {
+  _handleArrowKeys = (e: Event) => {
     if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
       e.preventDefault(); // Prevent unwanted scrolling on Firefox
     }
@@ -261,9 +256,9 @@ export default class SectionsContainer extends Component {
     this._setAnchor(activeSection);
     this._handleSectionTransition(activeSection);
     this._addActiveClass();
-  }
+  };
 
-  _handleTouchNav() {
+  _handleTouchNav = () => {
     var that = this;
 
     var touchsurface = document.querySelector('.' + this.props.className),
@@ -334,9 +329,9 @@ export default class SectionsContainer extends Component {
       },
       false
     );
-  }
+  };
 
-  _handleAnchor() {
+  _handleAnchor = () => {
     const hash = window.location.hash.substring(1);
     const activeSection = this.props.anchors.indexOf(hash);
 
@@ -344,38 +339,38 @@ export default class SectionsContainer extends Component {
       this._handleSectionTransition(activeSection);
       this._addActiveClass();
     }
-  }
+  };
 
-  _setAnchor(index) {
+  _setAnchor = (index: number) => {
     const hash = this.props.anchors[index];
 
     if (!this.props.anchors.length || hash) {
       window.location.hash = '#' + hash;
     }
-  }
+  };
 
-  _handleScrollCallback() {
+  _handleScrollCallback = () => {
     if (this.props.scrollStartFn) {
       setTimeout(() => this.props.scrollStartFn(this.state), 0);
     }
-  }
+  };
 
-  _resetScroll() {
+  _resetScroll = () => {
     this._clearResetScrollTimer();
     this._resetScrollTimer = setTimeout(() => {
       this.setState({
         scrollingStarted: false,
       });
     }, this.props.delay + 300);
-  }
+  };
 
-  _clearResetScrollTimer() {
+  _clearResetScrollTimer = () => {
     if (this._resetScrollTimer) {
       clearTimeout(this._resetScrollTimer);
     }
-  }
+  };
 
-  renderNavigation() {
+  renderNavigation = () => {
     let navigationStyle = {
       position: 'fixed',
       zIndex: '10',
@@ -413,7 +408,7 @@ export default class SectionsContainer extends Component {
         {anchors}
       </div>
     );
-  }
+  };
 
   render() {
     let containerStyle = {

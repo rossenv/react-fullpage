@@ -33,6 +33,129 @@ var SectionsContainer = function (_Component) {
     _this.prevTime = new Date().getTime();
     _this.scrollings = [];
 
+    _this._getAverage = function (elements, number) {
+      var sum = 0;
+
+      //taking `number` elements from the end to make the average, if there are not enought, 1
+      var lastElements = elements.slice(Math.max(elements.length - number, 1));
+
+      for (var i = 0; i < lastElements.length; i++) {
+        sum = sum + lastElements[i];
+      }
+
+      return Math.ceil(sum / number);
+    };
+
+    _this._removeDefaultEventListeners = function () {
+      window.removeEventListener('resize', _this._handleResize);
+      window.removeEventListener('hashchange', _this._handleAnchor);
+
+      if (_this.props.arrowNavigation) {
+        window.removeEventListener('keydown', _this._handleArrowKeys);
+      }
+    };
+
+    _this._addCSS3Scroll = function () {
+      _this._addOverflowToBody();
+      _this._addMouseWheelEventHandlers();
+    };
+
+    _this._addActiveClass = function () {
+      _this._removeActiveClass();
+
+      var hash = window.location.hash.substring(1);
+      var activeLinks = document.querySelectorAll('a[href="#' + hash + '"]');
+
+      for (var i = 0; i < activeLinks.length; i++) {
+        activeLinks[i].className = activeLinks[i].className + (activeLinks[i].className.length > 0 ? ' ' : '') + ('' + _this.props.activeClass);
+      }
+    };
+
+    _this._removeActiveClass = function () {
+      var activeLinks = document.querySelectorAll('a:not([href="#' + _this.props.anchors[_this.state.activeSection] + '"])');
+
+      for (var i = 0; i < activeLinks.length; i++) {
+        activeLinks[i].className = activeLinks[i].className.replace(/\b ?active/g, '');
+      }
+    };
+
+    _this._addChildrenWithAnchorId = function () {
+      var index = 0;
+
+      return _react2.default.Children.map(_this.props.children, function (child) {
+        var id = _this.props.anchors[index];
+
+        index++;
+
+        if (id) {
+          return _react2.default.cloneElement(child, {
+            id: id
+          });
+        } else {
+          return child;
+        }
+      });
+    };
+
+    _this._addOverflowToBody = function () {
+      document.querySelector('body').style.overflow = 'hidden';
+    };
+
+    _this._removeOverflowFromBody = function () {
+      document.querySelector('body').style.overflow = 'initial';
+    };
+
+    _this._addMouseWheelEventHandlers = function () {
+      window.addEventListener('mousewheel', _this._handleMouseWheel, false);
+      window.addEventListener('DOMMouseScroll', _this._handleMouseWheel, false);
+    };
+
+    _this._removeMouseWheelEventHandlers = function () {
+      window.removeEventListener('mousewheel', _this._handleMouseWheel);
+      window.removeEventListener('DOMMouseScroll', _this._handleMouseWheel);
+    };
+
+    _this._handleMouseWheel = function (event) {
+      var e = window.event || event; // old IE support
+      var value = e.wheelDelta || -e.deltaY || -e.detail;
+      var delta = Math.max(-1, Math.min(1, value));
+      var activeSection = _this.state.activeSection - delta;
+
+      var curTime = new Date().getTime();
+
+      //Limiting the array to 150 (lets not waste memory!)
+      if (_this.scrollings.length > 149) {
+        _this.scrollings.shift();
+      }
+
+      //keeping record of the previous scrollings
+      _this.scrollings.push(Math.abs(value));
+
+      var timeDiff = curTime - _this.prevTime;
+
+      _this.prevTime = curTime;
+
+      if (timeDiff > 200) {
+        _this.scrollings = [];
+      }
+
+      var avgEnd = _this._getAverage(_this.scrollings, 10);
+      var avgMid = _this._getAverage(_this.scrollings, 70);
+      var isAccelerating = avgEnd >= avgMid;
+
+      if (!isAccelerating) {
+        return false;
+      }
+
+      if (_this.state.scrollingStarted || activeSection < 0 || _this._childrenLength === activeSection) {
+        return false;
+      }
+
+      _this._setAnchor(activeSection);
+      _this._handleSectionTransition(activeSection);
+      _this._addActiveClass();
+    };
+
     _this._handleResize = function () {
       var started = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -47,17 +170,185 @@ var SectionsContainer = function (_Component) {
       _this._resetScroll();
     };
 
+    _this._handleSectionTransition = function (index) {
+      var position = 0 - index * _this.state.windowHeight;
+
+      if (!_this.props.anchors.length || index === -1 || index >= _this.props.anchors.length) {
+        return false;
+      }
+
+      _this.setState({
+        scrollingStarted: true,
+        activeSection: index,
+        sectionScrolledPosition: position
+      });
+
+      _this._resetScroll();
+      _this._handleScrollCallback();
+    };
+
+    _this._handleArrowKeys = function (e) {
+      if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault(); // Prevent unwanted scrolling on Firefox
+      }
+      var event = window.event ? window.event : e;
+      var activeSection = event.keyCode === 38 || event.keyCode === 37 ? _this.state.activeSection - 1 : event.keyCode === 40 || event.keyCode === 39 ? _this.state.activeSection + 1 : -1;
+
+      if (_this.state.scrollingStarted || activeSection < 0 || _this._childrenLength === activeSection) {
+        return false;
+      }
+
+      _this._setAnchor(activeSection);
+      _this._handleSectionTransition(activeSection);
+      _this._addActiveClass();
+    };
+
+    _this._handleTouchNav = function () {
+      var that = _this;
+
+      var touchsurface = document.querySelector('.' + _this.props.className),
+          swipedir,
+          startX,
+          startY,
+          dist,
+          distX,
+          distY,
+          threshold = 50,
+          //required min distance traveled to be considered swipe
+      restraint = 100,
+          // maximum distance allowed at the same time in perpendicular direction
+      allowedTime = 1000,
+          // maximum time allowed to travel that distance
+      elapsedTime,
+          startTime,
+          handleswipe = function handleswipe(swipedir) {
+        console.log(swipedir);
+      };
+
+      touchsurface.addEventListener('touchstart', function (e) {
+        var touchobj = e.changedTouches[0];
+        swipedir = 'none';
+        dist = 0;
+        startX = touchobj.pageX;
+        startY = touchobj.pageY;
+        startTime = new Date().getTime(); // record time when finger first makes contact with surface
+        // e.preventDefault()
+      }, false);
+
+      touchsurface.addEventListener('touchmove', function (e) {
+        e.preventDefault(); // prevent scrolling when inside DIV
+      }, false);
+
+      touchsurface.addEventListener('touchend', function (e) {
+        var touchobj = e.changedTouches[0];
+        distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
+        distY = touchobj.pageY - startY; // get vertical dist traveled by finger while in contact with surface
+        elapsedTime = new Date().getTime() - startTime; // get time elapsed
+        if (elapsedTime <= allowedTime) {
+          // first condition for awipe met
+          if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) {
+            // 2nd condition for vertical swipe met
+            swipedir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
+            var direction = swipedir === 'down' ? that.state.activeSection - 1 : swipedir === 'up' ? that.state.activeSection + 1 : -1;
+            var hash = that.props.anchors[direction];
+
+            if (!that.props.anchors.length || hash) {
+              window.location.hash = '#' + hash;
+            }
+
+            that._handleSectionTransition(direction);
+          }
+        }
+        handleswipe(swipedir);
+        // e.preventDefault()
+      }, false);
+    };
+
+    _this._handleAnchor = function () {
+      var hash = window.location.hash.substring(1);
+      var activeSection = _this.props.anchors.indexOf(hash);
+
+      if (_this.state.activeSection !== activeSection) {
+        _this._handleSectionTransition(activeSection);
+        _this._addActiveClass();
+      }
+    };
+
+    _this._setAnchor = function (index) {
+      var hash = _this.props.anchors[index];
+
+      if (!_this.props.anchors.length || hash) {
+        window.location.hash = '#' + hash;
+      }
+    };
+
+    _this._handleScrollCallback = function () {
+      if (_this.props.scrollStartFn) {
+        setTimeout(function () {
+          return _this.props.scrollStartFn(_this.state);
+        }, 0);
+      }
+    };
+
+    _this._resetScroll = function () {
+      _this._clearResetScrollTimer();
+      _this._resetScrollTimer = setTimeout(function () {
+        _this.setState({
+          scrollingStarted: false
+        });
+      }, _this.props.delay + 300);
+    };
+
+    _this._clearResetScrollTimer = function () {
+      if (_this._resetScrollTimer) {
+        clearTimeout(_this._resetScrollTimer);
+      }
+    };
+
+    _this.renderNavigation = function () {
+      var navigationStyle = {
+        position: 'fixed',
+        zIndex: '10',
+        right: '20px',
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+      };
+
+      var anchors = _this.props.anchors.map(function (link, index) {
+        var anchorStyle = {
+          display: 'block',
+          margin: '10px',
+          borderRadius: '100%',
+          backgroundColor: '#556270',
+          padding: '5px',
+          transition: 'all 0.2s',
+          transform: _this.state.activeSection === index ? 'scale(1.3)' : 'none'
+        };
+
+        return _react2.default.createElement('a', {
+          href: '#' + link,
+          key: index,
+          className: _this.props.navigationAnchorClass || 'Navigation-Anchor',
+          style: _this.props.navigationAnchorClass ? null : anchorStyle
+        });
+      });
+
+      return _react2.default.createElement(
+        'div',
+        {
+          className: _this.props.navigationClass || 'Navigation',
+          style: _this.props.navigationClass ? null : navigationStyle
+        },
+        anchors
+      );
+    };
+
     _this.state = {
       activeSection: props.activeSection,
       scrollingStarted: false,
       sectionScrolledPosition: 0,
       windowHeight: 0
     };
-
-    _this._handleMouseWheel = _this._handleMouseWheel.bind(_this);
-    _this._handleAnchor = _this._handleAnchor.bind(_this);
-    _this._handleResize = _this._handleResize.bind(_this);
-    _this._handleArrowKeys = _this._handleArrowKeys.bind(_this);
     return _this;
   }
 
@@ -126,330 +417,6 @@ var SectionsContainer = function (_Component) {
           }, 0);
         }
       }
-    }
-  }, {
-    key: '_getAverage',
-    value: function _getAverage(elements, number) {
-      var sum = 0;
-
-      //taking `number` elements from the end to make the average, if there are not enought, 1
-      var lastElements = elements.slice(Math.max(elements.length - number, 1));
-
-      for (var i = 0; i < lastElements.length; i++) {
-        sum = sum + lastElements[i];
-      }
-
-      return Math.ceil(sum / number);
-    }
-  }, {
-    key: '_removeDefaultEventListeners',
-    value: function _removeDefaultEventListeners() {
-      window.removeEventListener('resize', this._handleResize);
-      window.removeEventListener('hashchange', this._handleAnchor);
-
-      if (this.props.arrowNavigation) {
-        window.removeEventListener('keydown', this._handleArrowKeys);
-      }
-    }
-  }, {
-    key: '_addCSS3Scroll',
-    value: function _addCSS3Scroll() {
-      this._addOverflowToBody();
-      this._addMouseWheelEventHandlers();
-    }
-  }, {
-    key: '_addActiveClass',
-    value: function _addActiveClass() {
-      this._removeActiveClass();
-
-      var hash = window.location.hash.substring(1);
-      var activeLinks = document.querySelectorAll('a[href="#' + hash + '"]');
-
-      for (var i = 0; i < activeLinks.length; i++) {
-        activeLinks[i].className = activeLinks[i].className + (activeLinks[i].className.length > 0 ? ' ' : '') + ('' + this.props.activeClass);
-      }
-    }
-  }, {
-    key: '_removeActiveClass',
-    value: function _removeActiveClass() {
-      var activeLinks = document.querySelectorAll('a:not([href="#' + this.props.anchors[this.state.activeSection] + '"])');
-
-      for (var i = 0; i < activeLinks.length; i++) {
-        activeLinks[i].className = activeLinks[i].className.replace(/\b ?active/g, '');
-      }
-    }
-  }, {
-    key: '_addChildrenWithAnchorId',
-    value: function _addChildrenWithAnchorId() {
-      var _this3 = this;
-
-      var index = 0;
-
-      return _react2.default.Children.map(this.props.children, function (child) {
-        var id = _this3.props.anchors[index];
-
-        index++;
-
-        if (id) {
-          return _react2.default.cloneElement(child, {
-            id: id
-          });
-        } else {
-          return child;
-        }
-      });
-    }
-  }, {
-    key: '_addOverflowToBody',
-    value: function _addOverflowToBody() {
-      document.querySelector('body').style.overflow = 'hidden';
-    }
-  }, {
-    key: '_removeOverflowFromBody',
-    value: function _removeOverflowFromBody() {
-      document.querySelector('body').style.overflow = 'initial';
-    }
-  }, {
-    key: '_addMouseWheelEventHandlers',
-    value: function _addMouseWheelEventHandlers() {
-      window.addEventListener('mousewheel', this._handleMouseWheel, false);
-      window.addEventListener('DOMMouseScroll', this._handleMouseWheel, false);
-    }
-  }, {
-    key: '_removeMouseWheelEventHandlers',
-    value: function _removeMouseWheelEventHandlers() {
-      window.removeEventListener('mousewheel', this._handleMouseWheel);
-      window.removeEventListener('DOMMouseScroll', this._handleMouseWheel);
-    }
-  }, {
-    key: '_handleMouseWheel',
-    value: function _handleMouseWheel(event) {
-      var e = window.event || event; // old IE support
-      var value = e.wheelDelta || -e.deltaY || -e.detail;
-      var delta = Math.max(-1, Math.min(1, value));
-      var activeSection = this.state.activeSection - delta;
-
-      var curTime = new Date().getTime();
-
-      //Limiting the array to 150 (lets not waste memory!)
-      if (this.scrollings.length > 149) {
-        this.scrollings.shift();
-      }
-
-      //keeping record of the previous scrollings
-      this.scrollings.push(Math.abs(value));
-
-      var timeDiff = curTime - this.prevTime;
-
-      this.prevTime = curTime;
-
-      if (timeDiff > 200) {
-        this.scrollings = [];
-      }
-
-      var avgEnd = this._getAverage(this.scrollings, 10);
-      var avgMid = this._getAverage(this.scrollings, 70);
-      var isAccelerating = avgEnd >= avgMid;
-
-      if (!isAccelerating) {
-        return false;
-      }
-
-      if (this.state.scrollingStarted || activeSection < 0 || this._childrenLength === activeSection) {
-        return false;
-      }
-
-      this._setAnchor(activeSection);
-      this._handleSectionTransition(activeSection);
-      this._addActiveClass();
-    }
-  }, {
-    key: '_handleSectionTransition',
-    value: function _handleSectionTransition(index) {
-      var position = 0 - index * this.state.windowHeight;
-
-      if (!this.props.anchors.length || index === -1 || index >= this.props.anchors.length) {
-        return false;
-      }
-
-      this.setState({
-        scrollingStarted: true,
-        activeSection: index,
-        sectionScrolledPosition: position
-      });
-
-      this._resetScroll();
-      this._handleScrollCallback();
-    }
-  }, {
-    key: '_handleArrowKeys',
-    value: function _handleArrowKeys(e) {
-      if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-        e.preventDefault(); // Prevent unwanted scrolling on Firefox
-      }
-      var event = window.event ? window.event : e;
-      var activeSection = event.keyCode === 38 || event.keyCode === 37 ? this.state.activeSection - 1 : event.keyCode === 40 || event.keyCode === 39 ? this.state.activeSection + 1 : -1;
-
-      if (this.state.scrollingStarted || activeSection < 0 || this._childrenLength === activeSection) {
-        return false;
-      }
-
-      this._setAnchor(activeSection);
-      this._handleSectionTransition(activeSection);
-      this._addActiveClass();
-    }
-  }, {
-    key: '_handleTouchNav',
-    value: function _handleTouchNav() {
-      var that = this;
-
-      var touchsurface = document.querySelector('.' + this.props.className),
-          swipedir,
-          startX,
-          startY,
-          dist,
-          distX,
-          distY,
-          threshold = 50,
-          //required min distance traveled to be considered swipe
-      restraint = 100,
-          // maximum distance allowed at the same time in perpendicular direction
-      allowedTime = 1000,
-          // maximum time allowed to travel that distance
-      elapsedTime,
-          startTime,
-          handleswipe = function handleswipe(swipedir) {
-        console.log(swipedir);
-      };
-
-      touchsurface.addEventListener('touchstart', function (e) {
-        var touchobj = e.changedTouches[0];
-        swipedir = 'none';
-        dist = 0;
-        startX = touchobj.pageX;
-        startY = touchobj.pageY;
-        startTime = new Date().getTime(); // record time when finger first makes contact with surface
-        // e.preventDefault()
-      }, false);
-
-      touchsurface.addEventListener('touchmove', function (e) {
-        e.preventDefault(); // prevent scrolling when inside DIV
-      }, false);
-
-      touchsurface.addEventListener('touchend', function (e) {
-        var touchobj = e.changedTouches[0];
-        distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
-        distY = touchobj.pageY - startY; // get vertical dist traveled by finger while in contact with surface
-        elapsedTime = new Date().getTime() - startTime; // get time elapsed
-        if (elapsedTime <= allowedTime) {
-          // first condition for awipe met
-          if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) {
-            // 2nd condition for vertical swipe met
-            swipedir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
-            var direction = swipedir === 'down' ? that.state.activeSection - 1 : swipedir === 'up' ? that.state.activeSection + 1 : -1;
-            var hash = that.props.anchors[direction];
-
-            if (!that.props.anchors.length || hash) {
-              window.location.hash = '#' + hash;
-            }
-
-            that._handleSectionTransition(direction);
-          }
-        }
-        handleswipe(swipedir);
-        // e.preventDefault()
-      }, false);
-    }
-  }, {
-    key: '_handleAnchor',
-    value: function _handleAnchor() {
-      var hash = window.location.hash.substring(1);
-      var activeSection = this.props.anchors.indexOf(hash);
-
-      if (this.state.activeSection !== activeSection) {
-        this._handleSectionTransition(activeSection);
-        this._addActiveClass();
-      }
-    }
-  }, {
-    key: '_setAnchor',
-    value: function _setAnchor(index) {
-      var hash = this.props.anchors[index];
-
-      if (!this.props.anchors.length || hash) {
-        window.location.hash = '#' + hash;
-      }
-    }
-  }, {
-    key: '_handleScrollCallback',
-    value: function _handleScrollCallback() {
-      var _this4 = this;
-
-      if (this.props.scrollStartFn) {
-        setTimeout(function () {
-          return _this4.props.scrollStartFn(_this4.state);
-        }, 0);
-      }
-    }
-  }, {
-    key: '_resetScroll',
-    value: function _resetScroll() {
-      var _this5 = this;
-
-      this._clearResetScrollTimer();
-      this._resetScrollTimer = setTimeout(function () {
-        _this5.setState({
-          scrollingStarted: false
-        });
-      }, this.props.delay + 300);
-    }
-  }, {
-    key: '_clearResetScrollTimer',
-    value: function _clearResetScrollTimer() {
-      if (this._resetScrollTimer) {
-        clearTimeout(this._resetScrollTimer);
-      }
-    }
-  }, {
-    key: 'renderNavigation',
-    value: function renderNavigation() {
-      var _this6 = this;
-
-      var navigationStyle = {
-        position: 'fixed',
-        zIndex: '10',
-        right: '20px',
-        top: '50%',
-        transform: 'translate(-50%, -50%)'
-      };
-
-      var anchors = this.props.anchors.map(function (link, index) {
-        var anchorStyle = {
-          display: 'block',
-          margin: '10px',
-          borderRadius: '100%',
-          backgroundColor: '#556270',
-          padding: '5px',
-          transition: 'all 0.2s',
-          transform: _this6.state.activeSection === index ? 'scale(1.3)' : 'none'
-        };
-
-        return _react2.default.createElement('a', {
-          href: '#' + link,
-          key: index,
-          className: _this6.props.navigationAnchorClass || 'Navigation-Anchor',
-          style: _this6.props.navigationAnchorClass ? null : anchorStyle
-        });
-      });
-
-      return _react2.default.createElement(
-        'div',
-        {
-          className: this.props.navigationClass || 'Navigation',
-          style: this.props.navigationClass ? null : navigationStyle
-        },
-        anchors
-      );
     }
   }, {
     key: 'render',
