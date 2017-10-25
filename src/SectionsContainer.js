@@ -65,8 +65,6 @@ export default class SectionsContainer extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('this.state.scrollingStarted: ', this.state.scrollingStarted);
-    console.log('prevState.scrollingStarted: ', prevState.scrollingStarted);
     if (!this.state.scrollingStarted && prevState.scrollingStarted) {
       if (this.props.scrollEndFn) {
         setTimeout(() => this.props.scrollEndFn(this.state), 0);
