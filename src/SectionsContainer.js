@@ -41,7 +41,7 @@ export default class SectionsContainer extends Component {
   componentDidMount() {
     this._childrenLength = this.props.children.length;
 
-    this._handleResize();
+    this._handleResize(false);
     window.addEventListener('resize', this._handleResize);
 
     if (!this.props.scrollBar) {
@@ -70,6 +70,8 @@ export default class SectionsContainer extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('this.state.scrollingStarted: ', this.state.scrollingStarted);
+    console.log('prevState.scrollingStarted: ', prevState.scrollingStarted);
     if (!this.state.scrollingStarted && prevState.scrollingStarted) {
       if (this.props.scrollEndFn) {
         setTimeout(() => this.props.scrollEndFn(this.state), 0);
@@ -209,17 +211,17 @@ export default class SectionsContainer extends Component {
     this._addActiveClass();
   }
 
-  _handleResize() {
+  _handleResize = (started: boolean = true) => {
     const position = 0 - this.state.activeSection * window.innerHeight;
 
     this.setState({
-      scrollingStarted: true,
+      scrollingStarted: started,
       windowHeight: window.innerHeight,
       sectionScrolledPosition: position,
     });
 
     this._resetScroll();
-  }
+  };
 
   _handleSectionTransition(index) {
     const position = 0 - index * this.state.windowHeight;
@@ -360,7 +362,6 @@ export default class SectionsContainer extends Component {
 
   _resetScroll() {
     this._clearResetScrollTimer();
-
     this._resetScrollTimer = setTimeout(() => {
       this.setState({
         scrollingStarted: false,

@@ -33,6 +33,20 @@ var SectionsContainer = function (_Component) {
     _this.prevTime = new Date().getTime();
     _this.scrollings = [];
 
+    _this._handleResize = function () {
+      var started = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      var position = 0 - _this.state.activeSection * window.innerHeight;
+
+      _this.setState({
+        scrollingStarted: started,
+        windowHeight: window.innerHeight,
+        sectionScrolledPosition: position
+      });
+
+      _this._resetScroll();
+    };
+
     _this.state = {
       activeSection: props.activeSection,
       scrollingStarted: false,
@@ -70,7 +84,7 @@ var SectionsContainer = function (_Component) {
     value: function componentDidMount() {
       this._childrenLength = this.props.children.length;
 
-      this._handleResize();
+      this._handleResize(false);
       window.addEventListener('resize', this._handleResize);
 
       if (!this.props.scrollBar) {
@@ -103,6 +117,8 @@ var SectionsContainer = function (_Component) {
     value: function componentDidUpdate(prevProps, prevState) {
       var _this2 = this;
 
+      console.log('this.state.scrollingStarted: ', this.state.scrollingStarted);
+      console.log('prevState.scrollingStarted: ', prevState.scrollingStarted);
       if (!this.state.scrollingStarted && prevState.scrollingStarted) {
         if (this.props.scrollEndFn) {
           setTimeout(function () {
@@ -248,19 +264,6 @@ var SectionsContainer = function (_Component) {
       this._addActiveClass();
     }
   }, {
-    key: '_handleResize',
-    value: function _handleResize() {
-      var position = 0 - this.state.activeSection * window.innerHeight;
-
-      this.setState({
-        scrollingStarted: true,
-        windowHeight: window.innerHeight,
-        sectionScrolledPosition: position
-      });
-
-      this._resetScroll();
-    }
-  }, {
     key: '_handleSectionTransition',
     value: function _handleSectionTransition(index) {
       var position = 0 - index * this.state.windowHeight;
@@ -394,7 +397,6 @@ var SectionsContainer = function (_Component) {
       var _this5 = this;
 
       this._clearResetScrollTimer();
-
       this._resetScrollTimer = setTimeout(function () {
         _this5.setState({
           scrollingStarted: false
