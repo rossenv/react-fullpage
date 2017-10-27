@@ -21363,6 +21363,16 @@
 	  value: true
 	});
 
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+
 	var _createClass = function () {
 	  function defineProperties(target, props) {
 	    for (var i = 0; i < props.length; i++) {
@@ -21546,9 +21556,9 @@
 	        scrollingStarted: started,
 	        windowHeight: window.innerHeight,
 	        sectionScrolledPosition: position
+	      }, function () {
+	        _this._resetScroll();
 	      });
-
-	      _this._resetScroll();
 	    };
 
 	    _this._handleSectionTransition = function (index) {
@@ -21562,10 +21572,10 @@
 	        scrollingStarted: true,
 	        activeSection: index,
 	        sectionScrolledPosition: position
+	      }, function () {
+	        _this._resetScroll();
+	        _this._handleScrollCallback();
 	      });
-
-	      _this._resetScroll();
-	      _this._handleScrollCallback();
 	    };
 
 	    _this._handleArrowKeys = function (e) {
@@ -21666,7 +21676,9 @@
 
 	    _this._handleScrollCallback = function () {
 	      if (_this.props.scrollStartFn) {
-	        _this.props.scrollStartFn(_this.state);
+	        setTimeout(function () {
+	          return _this.props.scrollStartFn(_this.state);
+	        }, 0);
 	      }
 	    };
 
@@ -21782,9 +21794,13 @@
 	  }, {
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps, prevState) {
+	      var _this2 = this;
+
 	      if (!this.state.scrollingStarted && prevState.scrollingStarted) {
 	        if (this.props.scrollEndFn) {
-	          this.props.scrollEndFn(this.state);
+	          setTimeout(function () {
+	            return _this2.props.scrollEndFn(_this2.state);
+	          }, 0);
 	        }
 	      }
 	    }
@@ -21799,7 +21815,7 @@
 	        transition: 'all ' + this.props.delay + 'ms ease'
 	      };
 
-	      return _react2.default.createElement('div', null, _react2.default.createElement('div', { className: this.props.className, style: containerStyle }, this.props.scrollBar ? this._addChildrenWithAnchorId() : this.props.children), this.props.navigation && !this.props.scrollBar ? this.renderNavigation() : null);
+	      return _react2.default.createElement('div', null, _react2.default.createElement('div', { className: this.props.className, style: _extends({}, containerStyle, this.props.style) }, this.props.scrollBar ? this._addChildrenWithAnchorId() : this.props.children), this.props.navigation && !this.props.scrollBar ? this.renderNavigation() : null);
 	    }
 	  }]);
 
@@ -21863,6 +21879,16 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
 
 	var _createClass = function () {
 	  function defineProperties(target, props) {
@@ -21984,7 +22010,7 @@
 	      return React.createElement('div', {
 	        className: this.context.sectionClassName + (this.props.className ? ' ' + this.props.className : ''),
 	        id: this.props.id,
-	        style: sectionStyle
+	        style: _extends({}, sectionStyle, this.props.style)
 	      }, alignVertical ? this._renderVerticalAlign() : this.props.children);
 	    }
 	  }]);

@@ -55,7 +55,7 @@ class Section extends React.Component {
           this.context.sectionClassName + (this.props.className ? ` ${this.props.className}` : '')
         }
         id={this.props.id}
-        style={sectionStyle}
+        style={{ ...sectionStyle, ...this.props.style }}
       >
         {alignVertical ? this._renderVerticalAlign() : this.props.children}
       </div>

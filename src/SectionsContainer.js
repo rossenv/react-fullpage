@@ -423,7 +423,7 @@ export default class SectionsContainer extends Component {
 
     return (
       <div>
-        <div className={this.props.className} style={containerStyle}>
+        <div className={this.props.className} style={{ ...containerStyle, ...this.props.style }}>
           {this.props.scrollBar ? this._addChildrenWithAnchorId() : this.props.children}
         </div>
         {this.props.navigation && !this.props.scrollBar ? this.renderNavigation() : null}
