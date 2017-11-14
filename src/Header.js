@@ -1,16 +1,18 @@
 import * as React from 'react';
 
 class Header extends React.Component {
-  render() {
-    const headerStyle = {
-      position: 'fixed',
-      width: '100%',
-      zIndex: '1',
-      top: '0',
-    };
+	render() {
+		const headerStyle = {
+			position: 'fixed',
+			width: '100%',
+			zIndex: '1',
+			top: '0',
+		};
 
-    return <header style={headerStyle}>{this.props.children}</header>;
-  }
+		return (
+			<header style={{ ...headerStyle, ...this.props.style }}>{this.props.children}</header>
+		);
+	}
 }
 
 export default Header;

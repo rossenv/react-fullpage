@@ -82,128 +82,134 @@
 	var app = document.querySelector('#app');
 
 	var Example = function (_React$Component) {
-	  _inherits(Example, _React$Component);
+		_inherits(Example, _React$Component);
 
-	  function Example(props) {
-	    _classCallCheck(this, Example);
+		function Example(props) {
+			_classCallCheck(this, Example);
 
-	    var _this = _possibleConstructorReturn(this, (Example.__proto__ || Object.getPrototypeOf(Example)).call(this, props));
+			var _this = _possibleConstructorReturn(this, (Example.__proto__ || Object.getPrototypeOf(Example)).call(this, props));
 
-	    _this.state = {
-	      current: 0
-	    };
-	    return _this;
-	  }
+			_this.state = {
+				current: 0
+			};
+			return _this;
+		}
 
-	  _createClass(Example, [{
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
+		_createClass(Example, [{
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
 
-	      var options = {
-	        sectionClassName: 'section',
-	        anchors: ['sectionOne', 'sectionTwo', 'sectionThree'],
-	        scrollBar: false,
-	        navigation: true,
-	        verticalAlign: false,
-	        sectionPaddingTop: '50px',
-	        sectionPaddingBottom: '50px',
-	        arrowNavigation: true,
-	        scrollStartFn: function scrollStartFn(states) {
-	          console.log('scrollStartFn states: ', states);
-	          _this2.setState({ current: states.activeSection });
-	        },
-	        scrollEndFn: function scrollEndFn(states) {
-	          console.log('scrollEndFn states: ', states);
-	        }
-	      };
+				var options = {
+					sectionClassName: 'section',
+					anchors: ['sectionOne', 'sectionTwo', 'sectionThree'],
+					scrollBar: false,
+					navigation: true,
+					verticalAlign: false,
+					sectionPaddingTop: '50px',
+					sectionPaddingBottom: '50px',
+					arrowNavigation: true,
+					scrollStartFn: function scrollStartFn(states) {
+						console.log('scrollStartFn states: ', states);
+						_this2.setState({ current: states.activeSection });
+					},
+					scrollEndFn: function scrollEndFn(states) {
+						console.log('scrollEndFn states: ', states);
+					}
+				};
 
-	      var current = this.state.current;
+				var current = this.state.current;
 
 
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          _index.Header,
-	          null,
-	          React.createElement(
-	            'a',
-	            { href: '#sectionOne', className: 'opa' },
-	            'Section One'
-	          ),
-	          React.createElement(
-	            'a',
-	            { href: '#sectionTwo' },
-	            'Section Two'
-	          ),
-	          React.createElement(
-	            'a',
-	            { href: '#sectionThree' },
-	            'Section Three'
-	          )
-	        ),
-	        React.createElement(
-	          _index.Footer,
-	          null,
-	          React.createElement(
-	            'a',
-	            { href: '' },
-	            'Dcoumentation'
-	          ),
-	          React.createElement(
-	            'a',
-	            { href: '' },
-	            'Example Source'
-	          ),
-	          React.createElement(
-	            'a',
-	            { href: '' },
-	            'About'
-	          )
-	        ),
-	        React.createElement(
-	          _index.SectionsContainer,
-	          _extends({ className: 'container' }, options, { activeSection: current }),
-	          React.createElement(
-	            _index.Section,
-	            { className: 'custom-section', verticalAlign: 'true', color: '#69D2E7' },
-	            'Page 1'
-	          ),
-	          React.createElement(
-	            _index.Section,
-	            { color: '#A7DBD8' },
-	            'Page 2'
-	          ),
-	          React.createElement(
-	            _index.Section,
-	            { color: '#E0E4CC' },
-	            'Page 3'
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'btnGroup' },
-	          React.createElement(
-	            'button',
-	            { onClick: function onClick() {
-	                return _this2.setState({ current: current - 1 });
-	              }, disabled: current === 0 },
-	            'pre'
-	          ),
-	          React.createElement(
-	            'button',
-	            { onClick: function onClick() {
-	                return _this2.setState({ current: current + 1 });
-	              }, disabled: current === 2 },
-	            'next'
-	          )
-	        )
-	      );
-	    }
-	  }]);
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						_index.Header,
+						{ style: { backgroundColor: 'red' } },
+						React.createElement(
+							'a',
+							{ href: '#sectionOne', className: 'opa' },
+							'Section One'
+						),
+						React.createElement(
+							'a',
+							{ href: '#sectionTwo' },
+							'Section Two'
+						),
+						React.createElement(
+							'a',
+							{ href: '#sectionThree' },
+							'Section Three'
+						)
+					),
+					React.createElement(
+						_index.Footer,
+						{ style: { backgroundColor: 'orange' } },
+						React.createElement(
+							'a',
+							{ href: '' },
+							'Dcoumentation'
+						),
+						React.createElement(
+							'a',
+							{ href: '' },
+							'Example Source'
+						),
+						React.createElement(
+							'a',
+							{ href: '' },
+							'About'
+						)
+					),
+					React.createElement(
+						_index.SectionsContainer,
+						_extends({ className: 'container' }, options, { activeSection: current }),
+						React.createElement(
+							_index.Section,
+							{ className: 'custom-section', verticalAlign: 'true', color: '#69D2E7' },
+							'Page 1'
+						),
+						React.createElement(
+							_index.Section,
+							{ color: '#A7DBD8' },
+							'Page 2'
+						),
+						React.createElement(
+							_index.Section,
+							{ color: '#E0E4CC' },
+							'Page 3'
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'btnGroup' },
+						React.createElement(
+							'button',
+							{
+								onClick: function onClick() {
+									return _this2.setState({ current: current - 1 });
+								},
+								disabled: current === 0
+							},
+							'pre'
+						),
+						React.createElement(
+							'button',
+							{
+								onClick: function onClick() {
+									return _this2.setState({ current: current + 1 });
+								},
+								disabled: current === 2
+							},
+							'next'
+						)
+					)
+				);
+			}
+		}]);
 
-	  return Example;
+		return Example;
 	}(React.Component);
 
 	_reactDom2.default.render(React.createElement(Example, null), app);
@@ -22122,17 +22128,27 @@
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 
+	var _extends = Object.assign || function (target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}return target;
+	};
+
 	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
+		function defineProperties(target, props) {
+			for (var i = 0; i < props.length; i++) {
+				var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+			}
+		}return function (Constructor, protoProps, staticProps) {
+			if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+		};
 	}();
 
 	var _react = __webpack_require__(4);
@@ -22140,59 +22156,59 @@
 	var React = _interopRequireWildcard(_react);
 
 	function _interopRequireWildcard(obj) {
-	  if (obj && obj.__esModule) {
-	    return obj;
-	  } else {
-	    var newObj = {};if (obj != null) {
-	      for (var key in obj) {
-	        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-	      }
-	    }newObj.default = obj;return newObj;
-	  }
+		if (obj && obj.__esModule) {
+			return obj;
+		} else {
+			var newObj = {};if (obj != null) {
+				for (var key in obj) {
+					if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+				}
+			}newObj.default = obj;return newObj;
+		}
 	}
 
 	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
 	}
 
 	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+		if (!self) {
+			throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
 	}
 
 	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+		if (typeof superClass !== "function" && superClass !== null) {
+			throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+		}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
 	var Header = function (_React$Component) {
-	  _inherits(Header, _React$Component);
+		_inherits(Header, _React$Component);
 
-	  function Header() {
-	    _classCallCheck(this, Header);
+		function Header() {
+			_classCallCheck(this, Header);
 
-	    return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
-	  }
+			return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
+		}
 
-	  _createClass(Header, [{
-	    key: 'render',
-	    value: function render() {
-	      var headerStyle = {
-	        position: 'fixed',
-	        width: '100%',
-	        zIndex: '1',
-	        top: '0'
-	      };
+		_createClass(Header, [{
+			key: 'render',
+			value: function render() {
+				var headerStyle = {
+					position: 'fixed',
+					width: '100%',
+					zIndex: '1',
+					top: '0'
+				};
 
-	      return React.createElement('header', { style: headerStyle }, this.props.children);
-	    }
-	  }]);
+				return React.createElement('header', { style: _extends({}, headerStyle, this.props.style) }, this.props.children);
+			}
+		}]);
 
-	  return Header;
+		return Header;
 	}(React.Component);
 
 	exports.default = Header;
@@ -22206,17 +22222,27 @@
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 
+	var _extends = Object.assign || function (target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}return target;
+	};
+
 	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
+		function defineProperties(target, props) {
+			for (var i = 0; i < props.length; i++) {
+				var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+			}
+		}return function (Constructor, protoProps, staticProps) {
+			if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+		};
 	}();
 
 	var _react = __webpack_require__(4);
@@ -22224,59 +22250,59 @@
 	var React = _interopRequireWildcard(_react);
 
 	function _interopRequireWildcard(obj) {
-	  if (obj && obj.__esModule) {
-	    return obj;
-	  } else {
-	    var newObj = {};if (obj != null) {
-	      for (var key in obj) {
-	        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-	      }
-	    }newObj.default = obj;return newObj;
-	  }
+		if (obj && obj.__esModule) {
+			return obj;
+		} else {
+			var newObj = {};if (obj != null) {
+				for (var key in obj) {
+					if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+				}
+			}newObj.default = obj;return newObj;
+		}
 	}
 
 	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
 	}
 
 	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+		if (!self) {
+			throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
 	}
 
 	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+		if (typeof superClass !== "function" && superClass !== null) {
+			throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+		}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
 	var Footer = function (_React$Component) {
-	  _inherits(Footer, _React$Component);
+		_inherits(Footer, _React$Component);
 
-	  function Footer() {
-	    _classCallCheck(this, Footer);
+		function Footer() {
+			_classCallCheck(this, Footer);
 
-	    return _possibleConstructorReturn(this, (Footer.__proto__ || Object.getPrototypeOf(Footer)).apply(this, arguments));
-	  }
+			return _possibleConstructorReturn(this, (Footer.__proto__ || Object.getPrototypeOf(Footer)).apply(this, arguments));
+		}
 
-	  _createClass(Footer, [{
-	    key: 'render',
-	    value: function render() {
-	      var footerStyle = {
-	        position: 'fixed',
-	        width: '100%',
-	        zIndex: '1',
-	        bottom: '0'
-	      };
+		_createClass(Footer, [{
+			key: 'render',
+			value: function render() {
+				var footerStyle = {
+					position: 'fixed',
+					width: '100%',
+					zIndex: '1',
+					bottom: '0'
+				};
 
-	      return React.createElement('footer', { style: footerStyle }, this.props.children);
-	    }
-	  }]);
+				return React.createElement('footer', { style: _extends({}, footerStyle, this.props.style) }, this.props.children);
+			}
+		}]);
 
-	  return Footer;
+		return Footer;
 	}(React.Component);
 
 	exports.default = Footer;
