@@ -317,15 +317,15 @@ export default class SectionsContainer extends Component {
 						swipedir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
 						var direction =
 							swipedir === 'down'
-								? selfstate.activeSection - 1
-								: swipedir === 'up' ? selfstate.activeSection + 1 : -1;
-						var hash = selfprops.anchors[direction];
+								? self.state.activeSection - 1
+								: swipedir === 'up' ? self.state.activeSection + 1 : -1;
+						var hash = self.props.anchors[direction];
 
-						if (!selfprops.anchors.length || hash) {
+						if (!self.props.anchors.length || hash) {
 							window.location.hash = '#' + hash;
 						}
 
-						self_handleSectionTransition(direction);
+						self._handleSectionTransition(direction);
 					}
 				}
 				handleswipe(swipedir);
